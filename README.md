@@ -145,7 +145,6 @@ The [DAQ](https://www.ni.com/docs/en-US/bundle/measurement-studio-ni-daqmx-proje
 
 ## Notes
 
-_(Reserved for future additions or caveats.)_
 
 ---
 
