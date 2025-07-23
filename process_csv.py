@@ -11,7 +11,7 @@ def process_file(file_path):
     column_names = [
         'Time', 'P1', 'P2', 'P3', 'p4', 'V_AS0(P5)', 'P6', 'P7', 'P8', 'P9',
         'V_AS1(P10)', 'FRQ', 'LoadCell_0', 'LoadCell_1', 'LoadCell_2',
-        'LC0', 'LC1', 'LC2', 'Velocity'
+        'LC0', 'LC1', 'LC2', 'Velocity', 'Tare'
     ]
     df.columns = column_names
 
@@ -29,7 +29,7 @@ def process_file(file_path):
     raw_means = grouped[raw_cols].mean()
 
     # Get first available processed values
-    processed_cols = ['LC0', 'LC1', 'LC2', 'Velocity']
+    processed_cols = ['LC0', 'LC1', 'LC2', 'Velocity', 'Tare']
     processed_vals = grouped[processed_cols].first()
 
     # First raw float timestamp in each block
