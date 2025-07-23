@@ -34,6 +34,7 @@ It may also be useful in advancing various forms of aerodynamic research.
 - **NI-9219 or "9219"**: A module for the DAQ with additional functionality for load cells.
 - **NI-9263 or "9263"**: A module for the DAQ that outputs an analog voltage signal.
 - **VI**: "Virtual Instrument", the LabVIEW program (like a `.py` or `.c` file).
+- **LCX**: There are three load cells in the system and are labeled LC0-LC2. These can be seen in the test section
 
 ### Quick Start Guide
 
