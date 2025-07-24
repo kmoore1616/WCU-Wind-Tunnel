@@ -164,14 +164,14 @@ The [DAQ](https://www.ni.com/docs/en-US/bundle/measurement-studio-ni-daqmx-proje
   - Outputs dynamic signals (arrays with metadata)
   - Split into: (1) raw data logged to file, (2) signal processed in VI
   
-    <img width="200" alt="image" src="https://github.com/user-attachments/assets/d630b287-842f-4c90-b43c-f8aa91290b97" />
+    <img width="300" alt="image" src="https://github.com/user-attachments/assets/d630b287-842f-4c90-b43c-f8aa91290b97" />
 
 
 - **DAQ Output**:  
   - Configured similarly
   - Controls voltage outputs to the VFD
  
-    <img width="200" alt="image" src="https://github.com/user-attachments/assets/764bf0e2-ae66-456a-91d5-62a7059965c6" />
+    <img width="300" alt="image" src="https://github.com/user-attachments/assets/764bf0e2-ae66-456a-91d5-62a7059965c6" />
 
 #### Sub-VI's
 To make the code more compact and readable (very important when looking at LabVIEW), there are SUB-VI's, which are essentially functions. These have inputs outputs, and contain code within.
@@ -183,11 +183,11 @@ An important feature of any sensor suite is the ability to "Tare" or adjust the 
 
 The taring Sub-VI is shown below:
 
-<img width="300" alt="Screenshot 2025-07-24 105234" src="https://github.com/user-attachments/assets/47e67969-b64a-443a-a60d-4ed61b3ea032" />
+<img width="400" alt="Screenshot 2025-07-24 105234" src="https://github.com/user-attachments/assets/47e67969-b64a-443a-a60d-4ed61b3ea032" />
 
 Each of lines entering the Sub-VI are either inputs or outputs. These are converted into controls on the front panel that feeds into the logic contained in the block diagram.
 
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/8625865d-e004-4978-859c-746c5d62f559" />
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/8625865d-e004-4978-859c-746c5d62f559" />
 
 The image attached is what is contained within the Sub-VI. On the right is the front panel with the IO terminals labeled. If you hover over the lines entering the Sub-VI they will line up with the various IO terminals.
 On the left is the Tare logic. Each of the components has a context help, seen on the top left to help decode what is going on. The Tare Sub-VI is the most compicated in the program, and if you can understand it,
@@ -197,9 +197,14 @@ you can understand everything.
 Data collection is very important for the use of the wind tunnel. Throughout its operation, both its raw and processed data are fed into a spreadsheet for analysis. 
 Attached is an image of this system:
 
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/e6cc30e2-c869-4c64-9b66-73d126769e50" />
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/e6cc30e2-c869-4c64-9b66-73d126769e50" />
 
-On the left are the data-to-dynamic.vi's. These convert the processed data (velocity, force readings, etc) back into the dynamic data, compatible with the data the daq outputs. These dynamic data streams are synced with a value t0, stripped from the raw data stream, syncing each of the data points. These data points are then combined into an array of signals (tree looking thing) and sent into data-collection.vi. This Sub-VI activates a write to measurement (csv) function every X ms, determined from the Spreadsheet Write Timer. If this timer sends its signal, and data collection is enabled, the write to measurement function writes the data assembled to a spreadsheet specified by the path-gen.vi (see right side of block diagram outside of main loop). 
+On the left are the data-to-dynamic.vi's. These convert the processed data (velocity, force readings, etc) back into the dynamic data, compatible with the data the daq outputs. These dynamic data streams are synced with a value t0, stripped from the raw data stream, syncing each of the data points. These data points are then combined into an array of signals (tree looking thing) and sent into data-collection.vi. This Sub-VI activates a write to measurement (csv) function every X ms, determined from the Spreadsheet Write Timer. If this timer sends its signal, and data collection is enabled, the write to measurement function writes the data assembled to a spreadsheet specified by the path-gen.vi (see right side of block diagram outside of main loop). Note that if the spreadsheet write delay is too small, the lag caused by the writing will cause the program to crash.
 
-#### Process
----
+#### Process CSV
+
+As a quirk of how the data collection is implemented, the outputted data is a little strange. It has no headers, and for every 100 raw data entries, there is only one processed data entry. This is due to how the daq assistant outputs data. It is running continously at 200hz reading 100 samples, so it outputs 100 samples every 0.005 seconds. When the CSV is written to, the full 100 samples being outputted by the daq is written but only the one processed data entry is entered. Luckily, because everything is timestamped it all is written in the correct places, just with gaps where there is no processed data to write. To solve this there is a script, process_csv.py that takes the average of the 100 raw data points and collapes all the data into a nicely formatted CSV. To use the tool simply drag the original CSV onto the python program and it will output a "processed.csv" version in the same directory. There is a trade off of data resolution (in the original) for formatting and ease of use (in the processed version).
+
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/cf0dc15f-7a4e-41f5-8474-12a7945609e9" />
+
+
