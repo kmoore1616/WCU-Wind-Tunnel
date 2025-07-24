@@ -28,13 +28,17 @@ It may also be useful in advancing various forms of aerodynamic research.
 ### Nomenclature
 
 - **VFD**: Variable Frequency Device, used to "throttle" the fan. The box next to the fan with the dials.
+  ![PXL_20250724_154811951](https://github.com/user-attachments/assets/19e56fcd-8ca9-4bc7-bb18-74fa41cda1f9)
 - **CAB**: "Clear Acrylic Box" housed underneath the table that is the hub between all sensors.
+  ![PXL_20250714_164213962](https://github.com/user-attachments/assets/da0145e0-fb84-419c-a83e-07ca165ea0d3)
 - **The DAQ**: The central hub for all sensor information, populated by "modules" that read and write analog and digital voltage levels.
+![PXL_20250714_163414182](https://github.com/user-attachments/assets/fd467095-4ea5-4b34-bf61-242e4e97b10d)
 - **NI-9239 or "9239"**: A module for the DAQ that acts as a multimeter, reading analog DC voltage across its terminals.
 - **NI-9219 or "9219"**: A module for the DAQ with additional functionality for load cells.
 - **NI-9263 or "9263"**: A module for the DAQ that outputs an analog voltage signal.
 - **VI**: "Virtual Instrument", the LabVIEW program (like a `.py` or `.c` file).
-- **LCX**: There are three load cells in the system and are labeled LC0-LC2. These can be seen in the test section
+- **Sting**: The metal arm in the test section, equipped with three load cells, LC0-LC2.
+  ![PXL_20250724_154945673](https://github.com/user-attachments/assets/4b95a646-b4f1-4379-906d-01a0838465cb)
 
 ### Quick Start Guide
 
@@ -143,18 +147,3 @@ The [DAQ](https://www.ni.com/docs/en-US/bundle/measurement-studio-ni-daqmx-proje
   - Controls voltage outputs to the VFD
 
 ---
-
-## Notes
-
-
----
-
-## Figures
-
-### CAB Power Block Terminals
-
-![CAB Power Block Terminals](CAB1.png)
-
-### Top Down View of DAQ in CAB
-
-![Top down view of DAQ in CAB](CAB2.png)
