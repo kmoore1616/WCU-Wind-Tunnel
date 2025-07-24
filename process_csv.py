@@ -1,10 +1,8 @@
-
 import pandas as pd
 import sys
 import os
 
 def process_file(file_path):
-    # Read CSV with no headers
     df = pd.read_csv(file_path, header=None)
 
     # Assign known column names
@@ -15,9 +13,8 @@ def process_file(file_path):
     ]
     df.columns = column_names
 
-    # KEEP time as raw float (no conversion)
 
-    # Process in 100-sample blocks
+    # Process in 100-sample blocks. (100 readings from daq at 200hz)
     samples_per_block = 100
     num_blocks = len(df) // samples_per_block
     df_trimmed = df.iloc[:num_blocks * samples_per_block]
