@@ -26,17 +26,24 @@ It can gather data on lift, drag, and stall characteristics of models tested, an
 ### Nomenclature
 
 - **VFD**: Variable Frequency Device, used to "throttle" the fan. The box next to the fan with the dials.
-  ![PXL_20250724_154811951](https://github.com/user-attachments/assets/19e56fcd-8ca9-4bc7-bb18-74fa41cda1f9)
+  
+<img src="https://github.com/user-attachments/assets/19e56fcd-8ca9-4bc7-bb18-74fa41cda1f9" width="550">
+
 - **CAB**: "Clear Acrylic Box" housed underneath the table that is the hub between all sensors.
-  ![PXL_20250714_164213962](https://github.com/user-attachments/assets/da0145e0-fb84-419c-a83e-07ca165ea0d3)
+  
+<img src="https://github.com/user-attachments/assets/da0145e0-fb84-419c-a83e-07ca165ea0d3" width="550">
+
 - **The DAQ**: The central hub for all sensor information, populated by "modules" that read and write analog and digital voltage levels.
-![PXL_20250714_163414182](https://github.com/user-attachments/assets/fd467095-4ea5-4b34-bf61-242e4e97b10d)
+  
+<img src="https://github.com/user-attachments/assets/fd467095-4ea5-4b34-bf61-242e4e97b10d" width="550">
+
 - **NI-9239 or "9239"**: A module for the DAQ that acts as a multimeter, reading analog DC voltage across its terminals.
 - **NI-9219 or "9219"**: A module for the DAQ with additional functionality for load cells.
 - **NI-9263 or "9263"**: A module for the DAQ that outputs an analog voltage signal.
 - **VI**: "Virtual Instrument", the LabVIEW program (like a `.py` or `.c` file).
 - **Sting**: The metal arm in the test section, equipped with three load cells, LC0-LC2.
-  ![PXL_20250724_154945673](https://github.com/user-attachments/assets/4b95a646-b4f1-4379-906d-01a0838465cb)
+  
+<img src="https://github.com/user-attachments/assets/4b95a646-b4f1-4379-906d-01a0838465cb" width="550">
 
 ### Quick Start Guide
 
@@ -123,6 +130,9 @@ Located on the fan, the box includes:
 The wind tunnel is controlled through a LabVIEW program (the [VI](#nomenclature)).  
 Though non-traditional, LabVIEW was chosen for accessibility among engineers.
 
+A VI consists of a Front-Panel that hosts controls and data visualization, as well as a Block-Diagram which is the underlying code that runs the program. 
+The Front-Panel is all the user will see when the VI is exported as an executable.
+
 #### Descriptions and Tooltips
 
 Most components in the VI include tooltips.  
@@ -134,10 +144,16 @@ The main VI is enclosed in a while loop.
 - Code outside the loop runs once at start ("setup")
 - Code inside runs continuously ("loop"), similar to Arduino
 
+<img width="550" alt="Screenshot 2025-07-24 103742" src="https://github.com/user-attachments/assets/abdaab84-7a3b-49f5-94a1-0c146afeb840" />
+
 #### Shift Registers
 
 [Shift Registers](https://knowledge.ni.com/KnowledgeArticleDetails?id=kA03q000000YKYuCAO&l=en-US) are used to maintain state between loop iterations.  
-Example: "Tare SRs" are used to zero out sensor readings based on a user-controlled boolean.
+Each shift register contains two terminals on each side of the loop. The left terminal sends either the initial value fed in from outside the loop, or the previous value sent into the right terminal. 
+Example: "Tare SRs" are used to zero out sensor readings based on a user-controlled boolean. 
+
+<img height="400" alt="Screenshot 2025-07-17 134048" src="https://github.com/user-attachments/assets/a5421822-31db-4b15-97b0-b7fb4ed0f60c" />
+
 
 #### DAQ Integration
 
@@ -147,9 +163,43 @@ The [DAQ](https://www.ni.com/docs/en-US/bundle/measurement-studio-ni-daqmx-proje
   - Lists each sensor channel
   - Outputs dynamic signals (arrays with metadata)
   - Split into: (1) raw data logged to file, (2) signal processed in VI
+  
+    <img width="200" alt="image" src="https://github.com/user-attachments/assets/d630b287-842f-4c90-b43c-f8aa91290b97" />
+
 
 - **DAQ Output**:  
   - Configured similarly
   - Controls voltage outputs to the VFD
+ 
+    <img width="200" alt="image" src="https://github.com/user-attachments/assets/764bf0e2-ae66-456a-91d5-62a7059965c6" />
 
+#### Sub-VI's
+To make the code more compact and readable (very important when looking at LabVIEW), there are SUB-VI's, which are essentially functions. These have inputs outputs, and contain code within.
+These allow the programmer to cut down on "Spagetti" and make it easier for the next developer down the road. 
+
+The Sub-VI is a self contained program with its own front panel and IO. Below are a few examples of Sub-VI's:
+
+An important feature of any sensor suite is the ability to "Tare" or adjust the data from the sensor to zero when you'd expect it to be at zero (at system idle). Think of zeroing a scale just with different sensors. 
+
+The taring Sub-VI is shown below:
+
+<img width="300" alt="Screenshot 2025-07-24 105234" src="https://github.com/user-attachments/assets/47e67969-b64a-443a-a60d-4ed61b3ea032" />
+
+Each of lines entering the Sub-VI are either inputs or outputs. These are converted into controls on the front panel that feeds into the logic contained in the block diagram.
+
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/8625865d-e004-4978-859c-746c5d62f559" />
+
+The image attached is what is contained within the Sub-VI. On the right is the front panel with the IO terminals labeled. If you hover over the lines entering the Sub-VI they will line up with the various IO terminals.
+On the left is the Tare logic. Each of the components has a context help, seen on the top left to help decode what is going on. The Tare Sub-VI is the most compicated in the program, and if you can understand it,
+you can understand everything.
+
+#### Data Collection
+Data collection is very important for the use of the wind tunnel. Throughout its operation, both its raw and processed data are fed into a spreadsheet for analysis. 
+Attached is an image of this system:
+
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/e6cc30e2-c869-4c64-9b66-73d126769e50" />
+
+On the left are the data-to-dynamic.vi's. These convert the processed data (velocity, force readings, etc) back into the dynamic data, compatible with the data the daq outputs. These dynamic data streams are synced with a value t0, stripped from the raw data stream, syncing each of the data points. These data points are then combined into an array of signals (tree looking thing) and sent into data-collection.vi. This Sub-VI activates a write to measurement (csv) function every X ms, determined from the Spreadsheet Write Timer. If this timer sends its signal, and data collection is enabled, the write to measurement function writes the data assembled to a spreadsheet specified by the path-gen.vi (see right side of block diagram outside of main loop). 
+
+#### Process
 ---
