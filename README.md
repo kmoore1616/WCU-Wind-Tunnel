@@ -11,8 +11,7 @@
     - [DAQ Hardware Description](#daq-hardware-description)
     - [VFD](#vfd)
   - [Programming Guide](#programming-guide)
-- [Notes](#notes)
-- [Figures](#figures)
+
 
 ---
 
@@ -23,7 +22,6 @@
 This document describes the functioning of the WCU Wind Tunnel.  
 This system is capable of up to 70 m/s (~160 mph) and has an `Xm³` test section.  
 It can gather data on lift, drag, and stall characteristics of models tested, and can serve as an excellent educational aid.  
-It may also be useful in advancing various forms of aerodynamic research.
 
 ### Nomenclature
 
@@ -43,7 +41,14 @@ It may also be useful in advancing various forms of aerodynamic research.
 ### Quick Start Guide
 
 While it is recommended that the user read the [Developer Guide](#developer-guide) in its entirety, this section can be used to quickly understand the basic operation of the system.  
-To get data quickly, the following steps can be used to safely start and operate the system.
+To get data quickly, the following steps can be used to safely start and operate the system:
+
+1. Familiarize yourself with the LabVIEW panel. Pressing Ctrl+H will bring up a help menu. Clicking components will bring up more information on thier purpose.
+2.Looking at the graphs, they will not be zeroed. To fix this press SYSTEM TARE (bottom right of the Panel).  You should expect the graphs to the right to be within +- 5 of zero after tare. 
+3. Looking at the VFD box (the one attached to the fan with dials/switches) make sure it is set to ON, switched to Automated, and check that the Emergency Stop button is not pressed. If it is, twist it clockwise to reset
+4. Now the fan is controlled by this panel. On the"Fan Controls" below, set the "VFD mode switch" to the upward postition to to enable Speed % Mode, which controls the fan by a percentage of its maximum power. You can now adjust the box "Speed %" which will spin up the fan.
+
+NOTE:  To save data to CSV, first hit "System Stop", then refer to the controls on the bottom of this panel. Select the Enable Data Collection button so it displays "Enabled". Then set the Spreadsheet Path by selecting the little folder icon and following the prompts. Change the name as desired. Start over from step 1.
 
 ---
 
@@ -63,10 +68,9 @@ This device acts as the firmware between the sensors and LabVIEW.
 There are three modules used to do this:
 
 - The [NI-9239](https://www.ni.com/en-us/shop/model/ni-9239.html) analog input module that acts like a multimeter.
-- The [NI-9219](https://www.ni.com/en-us/shop/model/ni-9219.html) with additional functionality for load cell sensors.
+- The [NI-9219](https://www.ni.com/en-us/shop/model/ni-9219.html) is very similar to the NI-9239, with additional functionality for load cell sensors.
 - The [NI-9263](https://www.ni.com/en-us/shop/model/ni-9263.html) analog output module used to throttle the VFD, akin to a programmable power supply.
 
-See annotated images of the DAQ and hardware in the [Figures](#figures) section.
 
 ---
 
@@ -87,7 +91,7 @@ The DAQ acts as a combined multimeter and power supply, used to monitor and cont
   Users can set a fixed percentage of max speed or use PID velocity control (see *TODO SOFTWARE DOCS*).
 
 - **Sting**:  
-  A manually operated mechanism with three load cells connected to the NI-9219, measuring lift, drag, and moment. See [Figures](#figures).
+  A manually operated mechanism with three load cells connected to the NI-9219, measuring lift, drag, and moment.
 
 ---
 
@@ -101,12 +105,14 @@ Located on the fan, the box includes:
 - Potentiometer dial
 - Switch for "AUTOMATED" vs. "MANUAL" mode
 
+- There are multiple layers of abstraction to controlling the VFD. At the lowest level the user has the ability to throttle the VFD directly without any interaction with the Labview program. This is Manual Mode and should only be used if LabVIEW is not accessible, or if an issue arises with the system and more direct control is desired. The user can also throttle the fan via Automated mode, with varying levels of absraction, described below. 
+
 - **Manual Mode**:  
-  Uses physical potentiometer. Must be monitored by an operator.
+  Uses physical potentiometer. Must be monitored by an operator AT ALL TIMES!
 
 - **Automated Mode**:  
-  Uses LabVIEW to control fan speed via analog output.  
-  User can specify frequency (0–60 Hz) or desired airspeed (0–70 m/s).
+  Uses LabVIEW to control fan speed via analog output. Similar to a Fly-By-Wire system the user can throttle the system, but the computer sends the actual commands. This should be the main way of interfacing with the system.
+  There are two main options, Speed % mode and PID or Target Speed mode. The Speed % mode works by sending a command to the VFD to spin the fan at X% of its power. PID or Target Speed mode works VIA a [PID Loop]([https://www.automationdirect.com/adc/shopping/catalog/process_control_-a-_measurement/pressure_sensors/pressure_transmitters/lppt25-20-v30h](https://www.isa.org/intech-home/2023/june-2023/features/fundamentals-pid-control)), taking in a target airspeed, provided by the user, and the current airspeed, and adjusts the fan speed to reach the target speed. The current airspeed is either determined by the pitot tubes, giving a direct indicated airspeed, or an estimate based on VFD frequency, chosen by the user upon selection of this mode.
 
 ---
 
