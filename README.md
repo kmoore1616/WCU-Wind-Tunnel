@@ -1,27 +1,8 @@
 # WCU Wind Tunnel
 
-## Table of Contents
-- [Introduction](#introduction)
-  - [Overview of System](#overview-of-system)
-  - [Nomenclature](#nomenclature)
-  - [Quick Start Guide](#quick-start-guide)
-- [Developer Guide](#developer-guide)
-  - [Hardware Guide](#hardware-guide)
-    - [CAB Overview](#cab-overview)
-    - [DAQ Hardware Description](#daq-hardware-description)
-    - [VFD](#vfd)
-  - [Programming Guide](#programming-guide)
+## Overview of System
 
-
----
-
-## Introduction
-
-### Overview of System
-
-This document describes the functioning of the WCU Wind Tunnel.  
-This system is capable of up to 70 m/s (~160 mph) and has an `Xm³` test section.  
-It can gather data on lift, drag, and stall characteristics of models tested, and can serve as an excellent educational aid.  
+This document describes the functioning of the WCU Wind Tunnel software, firmware, and data collection hardware design, and is meant as a springboard for new developer  
 
 ### Nomenclature
 
@@ -51,7 +32,7 @@ While it is recommended that the user read the [Developer Guide](#developer-guid
 To get data quickly, the following steps can be used to safely start and operate the system:
 
 1. Familiarize yourself with the LabVIEW panel. Pressing Ctrl+H will bring up a help menu. Clicking components will bring up more information on thier purpose.
-2.Looking at the graphs, they will not be zeroed. To fix this press SYSTEM TARE (bottom right of the Panel).  You should expect the graphs to the right to be within +- 5 of zero after tare. 
+2. Looking at the graphs, they will not be zeroed. To fix this press SYSTEM TARE (bottom right of the Panel).  You should expect the graphs to the right to be within +- 5 of zero after tare.
 3. Looking at the VFD box (the one attached to the fan with dials/switches) make sure it is set to ON, switched to Automated, and check that the Emergency Stop button is not pressed. If it is, twist it clockwise to reset
 4. Now the fan is controlled by this panel. On the"Fan Controls" below, set the "VFD mode switch" to the upward postition to to enable Speed % Mode, which controls the fan by a percentage of its maximum power. You can now adjust the box "Speed %" which will spin up the fan.
 
