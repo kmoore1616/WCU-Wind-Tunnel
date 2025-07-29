@@ -2,7 +2,7 @@
 
 ## Overview of System
 
-This document describes the functioning of the WCU Wind Tunnel software, firmware, and data collection hardware design, and is meant as a springboard for new developer  
+This document describes the functioning of the WCU Wind Tunnel software, firmware, and data collection hardware design, and is meant as an entrypoint for anybody who needs to understand any part of the system.
 
 ### Nomenclature
 
@@ -62,9 +62,11 @@ There are three modules used to do this:
 
 ---
 
-#### DAQ Hardware Description
+#### Test Section Overview
 
-The DAQ acts as a combined multimeter and power supply, used to monitor and control each subsystem. The NI-9239 module has two terminals per channel (0 = positive, 1 = negative).
+The test section is the box with the clear window where data is collected. This data collection is facilitated by the DAQ.
+
+The DAQ acts as a combined multimeter and power supply, used to monitor and control each subsystem.
 
 - **Pressure Transmitters**:  
   [LPPT25-20-V30H pressure transmitters](https://www.automationdirect.com/adc/shopping/catalog/process_control_-a-_measurement/pressure_sensors/pressure_transmitters/lppt25-20-v30h) output 4-20 mA, mapping to -14.7 to 30 PSIG (relative to ambient).  
@@ -72,11 +74,10 @@ The DAQ acts as a combined multimeter and power supply, used to monitor and cont
   `ma = V / 220 * 1000`.
 
 - **VFD Frequency In**:  
-  The VFD outputs 0–10 V from AO1, which maps to a percentage. This voltage is multiplied by 6 in software to estimate fan frequency.
+  The VFD can report on its current frequency (the fan used in the wind tunnel runs on AC power, so is throttled via frequency. 0hz means the fan is off, and 60hz means the fan is at full power). This value is read from AO-0 (see VFD documentation) into the NI-923 as a voltage from 0-10v. 1v * 6 = 6hz = 10% of the fans total power.
 
-- **VFD Frequency Out**:  
-  The NI-9263 module sends 0–10 V to the VFD via AI0, mapping to 0–60 Hz.  
-  Users can set a fixed percentage of max speed or use PID velocity control (see *TODO SOFTWARE DOCS*).
+- **VFD Frequency Out**:
+  The VFD can be controlled by an external 0-10v source (0v = 0%, 10v = 100%). This is what throttles the fan. The NI-9263 is used as a voltage source to control the VFD, allowing the device to be controlled in software. 
 
 - **Sting**:  
   A manually operated mechanism with three load cells connected to the NI-9219, measuring lift, drag, and moment.
@@ -104,7 +105,7 @@ Located on the fan, the box includes:
 
 ---
 
-### Programming Guide
+## Programming Guide
 
 #### LabVIEW Overview
 
@@ -187,5 +188,37 @@ On the left are the data-to-dynamic.vi's. These convert the processed data (velo
 As a quirk of how the data collection is implemented, the outputted data is a little strange. It has no headers, and for every 100 raw data entries, there is only one processed data entry. This is due to how the daq assistant outputs data. It is running continously at 200hz reading 100 samples, so it outputs 100 samples every 0.005 seconds. When the CSV is written to, the full 100 samples being outputted by the daq is written but only the one processed data entry is entered. Luckily, because everything is timestamped it all is written in the correct places, just with gaps where there is no processed data to write. To solve this there is a script, process_csv.py that takes the average of the 100 raw data points and collapes all the data into a nicely formatted CSV. To use the tool simply drag the original CSV onto the python program and it will output a "processed.csv" version in the same directory. There is a trade off of data resolution (in the original) for formatting and ease of use (in the processed version).
 
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/cf0dc15f-7a4e-41f5-8474-12a7945609e9" />
+
+### Accelerometers
+
+Accelerometers are an important troubleshooting tool, giving informtation on vibrations on the test section, sting, and wherever else needs attention. There are three [ADXL345](https://www.adafruit.com/product/1231) accelerometers, with support up to eight sensors. These sensors communicate over [I2C](https://learn.sparkfun.com/tutorials/i2c/all), which the DAQ doesnt natively support. To overcome this a simple microcontroller (MCU) is used to communicate to the sensors, convert the data recieved from I2C into [UART](https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html) a simpler, but very compatible communication format. The MCU is an [STM8](https://www.st.com/en/microcontrollers-microprocessors/stm8s103f3.html) and was used because its what I had on hand. Its programmed in a similar way to Arduino. The sensors are plugged into a I2C multiplexer as they all share the same address. This allows the system to have accelerometers hotplugged into the system, and will work with up to eight concurrent adxl345 sensors with no other work needed from the user. The data is visualized in the accelerometer vi and will show live data from each of the sensors plugged into the system. Make sure the right COM port is selected. See troubleshooting. 
+
+
+### Troubleshooting
+#### No change in data readouts in LabView
+- Make sure daq is powered and plugged into the computer.
+- Check raw voltage data. Pressure transmitters should read ~2v, and the load cells should read around 0v.
+
+#### Fan not spinning up
+- Is everything is plugged in.
+- Double check VFD panel.
+- Is VFD mode select switch in LabView set to the setting you expect?
+- Set VFD Mode Select to Speed %, enter in 10v, the Voltage Out should read 1. VFD frequency should climb to ~6 hz.
+- If Frequency at 0, go to VFD, open box. The display should read ~6hz
+- If the VFD is reporting 0hz, switch VFD to manual, and use dial on side to throttle VFD. If fan spins up, continue this troubleshooting guide, otherwise the issue is outside this guides scope
+- Check wiring leading to the CAB.s
+
+### Requirements
+
+
+
+
+
+
+
+
+
+
+
 
 
