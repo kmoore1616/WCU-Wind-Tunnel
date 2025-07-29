@@ -1,12 +1,14 @@
+// Driver code to covert I2C signals from ADXL345 into UART for LabVIEW
+
 #include <Arduino.h>
 #include <Serial.h>
 #include <I2C.h>
 
-#define MUX_ADDR 0x70
-#define ACC_ADDR 0x53
+#define MUX_ADDR 0x70 // Address for I2C multiplexer
+#define ACC_ADDR 0x53 // Address shared between all accelerometers
 
 
-#define ACC_PWR 0x2D
+#define ACC_PWR 0x2D // Power register for ACC
 #define ACC_ON 0x8
 #define ACC_OFF 0x00
 
@@ -22,9 +24,10 @@
 
 #define DEBUG_MODE 0 // Set to 1 for more verbose output (Breaks labview)
 
-uint8_t act_channels[8] = {0,0,0,0,0,0,0,0};
-bool min = 0;
+uint8_t act_channels[8] = {0,0,0,0,0,0,0,0}; // What channels are active
+bool min = 0; // Makes sure at least one sensor is connected
 
+// Error handling, doesnt do much during non debug operation
 uint8_t i2c_err(uint8_t err){
 	if (err != 0) {
 		#if DEBUG_MODE
@@ -36,6 +39,7 @@ uint8_t i2c_err(uint8_t err){
 	return err;
 }
 
+// Tells the MUX to select channel "channel"
 uint8_t select_i2c_channel(uint8_t channel){
 	uint8_t err = I2C_write(MUX_ADDR, 1<<channel);
 	if(i2c_err(err)!=0){
@@ -60,11 +64,11 @@ uint8_t setup_acc(uint8_t channel){
 		return 0;
 	}
 	
-	err = I2C_write_reg(ACC_ADDR, ACC_DAT_FORMAT, ACC_2G); // Turn device on
+	err = I2C_write_reg(ACC_ADDR, ACC_DAT_FORMAT, ACC_2G); // Set Device params
 	if(i2c_err(err)!=0){
 		return 0;
 	}
-	err = I2C_write_reg(ACC_ADDR, ACC_BW_RATE, ACC_RATE_100HZ);
+	err = I2C_write_reg(ACC_ADDR, ACC_BW_RATE, ACC_RATE_100HZ); // Set Device params
 	if (i2c_err(err) != 0) {
 		return 0;
 	}
@@ -78,6 +82,7 @@ void setup(){
 	Serial_begin(9600);
 	I2C_begin();
 
+	// Scan through each channel and see which are active
 	for(int i=0; i<8; i++){
 		if(setup_acc(i)){
 			act_channels[i] = 1;
@@ -103,10 +108,11 @@ void loop() {
 	int err;
 	float scale = 1.0 / 256.0;
 
+	// Poll each channel and send its formatted data
 	for (int ch = 0; ch < 8; ch++) {
 		if (!act_channels[ch]) continue;
 
-		if (select_i2c_channel(ch) != 0) {
+		if (select_i2c_channel(ch) != 0) { // Sellect channel ch
 			#if DEBUG_MODE
 			Serial_print_s("Failed to select channel ");
 			Serial_print_i(ch);
@@ -114,9 +120,9 @@ void loop() {
 			#endif
 			continue;
 		}
-		delay(5);
+		delay(5); // wait for mux
 
-		err = I2C_readbuf_reg(ACC_ADDR, ACC_DAT_START, 6, raw_data);
+		err = I2C_readbuf_reg(ACC_ADDR, ACC_DAT_START, 6, raw_data); // Read data
 		if (i2c_err(err) != 0) {
 			#if DEBUG_MODE
 			Serial_print_s("Error reading data from channel ");
@@ -126,11 +132,11 @@ void loop() {
 			continue;
 		}
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) { // Format data
 			data[i] = (int16_t)(raw_data[i * 2] | (raw_data[i * 2 + 1] << 8));
 		}
 
-
+		// Output over serial
 		Serial_print_i(ch);
 		Serial_print_c(',');
 		Serial_print_f(data[0] * scale);
