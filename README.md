@@ -109,8 +109,8 @@ Located on the fan, the box includes:
 
 #### LabVIEW Overview
 
-The wind tunnel is controlled through a LabVIEW program (the [VI](#nomenclature)).  
-Though non-traditional, LabVIEW was chosen for accessibility among engineers.
+The wind tunnel is controlled through a LabVIEW program or the VI.  
+LabVIEW was chosen for accessibility among engineers, to allow those with limited programming experience the ability to modify the program.
 
 A VI consists of a Front-Panel that hosts controls and data visualization, as well as a Block-Diagram which is the underlying code that runs the program. 
 The Front-Panel is all the user will see when the VI is exported as an executable.
@@ -122,9 +122,9 @@ Access these through **Help → Context Help** and click any block to view docum
 
 #### Main Program Loop
 
-The main VI is enclosed in a while loop.  
+The program is designed to mimic the Arduino's architecture: 
 - Code outside the loop runs once at start ("setup")
-- Code inside runs continuously ("loop"), similar to Arduino
+- Code inside runs continuously ("loop")
 
 <img width="550" alt="Screenshot 2025-07-24 103742" src="https://github.com/user-attachments/assets/abdaab84-7a3b-49f5-94a1-0c146afeb840" />
 
@@ -157,7 +157,7 @@ The [DAQ](https://www.ni.com/docs/en-US/bundle/measurement-studio-ni-daqmx-proje
 
 #### Sub-VI's
 To make the code more compact and readable (very important when looking at LabVIEW), there are SUB-VI's, which are essentially functions. These have inputs outputs, and contain code within.
-These allow the programmer to cut down on "Spagetti" and make it easier for the next developer down the road. 
+These allow the programmer to cut down on "spaghetti" and make it easier for the next developer down the road. 
 
 The Sub-VI is a self contained program with its own front panel and IO. Below are a few examples of Sub-VI's:
 
@@ -172,8 +172,7 @@ Each of lines entering the Sub-VI are either inputs or outputs. These are conver
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/8625865d-e004-4978-859c-746c5d62f559" />
 
 The image attached is what is contained within the Sub-VI. On the right is the front panel with the IO terminals labeled. If you hover over the lines entering the Sub-VI they will line up with the various IO terminals.
-On the left is the Tare logic. Each of the components has a context help, seen on the top left to help decode what is going on. The Tare Sub-VI is the most compicated in the program, and if you can understand it,
-you can understand everything.
+On the left is the Tare logic. Each of the components has a context help, seen on the top left to help decode what is going on.
 
 #### Data Collection
 Data collection is very important for the use of the wind tunnel. Throughout its operation, both its raw and processed data are fed into a spreadsheet for analysis. 
@@ -208,17 +207,17 @@ Accelerometers are an important troubleshooting tool, giving informtation on vib
 - If the VFD is reporting 0hz, switch VFD to manual, and use dial on side to throttle VFD. If fan spins up, continue this troubleshooting guide, otherwise the issue is outside this guides scope
 - Check wiring leading to the CAB.s
 
+#### Accelerometer issures
+- Look at the board above the test section, the blue board should have a blue solid light and a flashing red light. If red light not flashing, press reset button on board.
+- Open up Arduino serial moniter on this computer. Check all COM ports until data shows up on the serial moniter. Close arduino and set port accordingly.
+- Check all wiring. Each acclerometer should have a green light.
+
 ### Requirements
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### Labview
+- To run the executable LabView runtime is needed. This software is free. [LabView Runtime](https://www.ni.com/en/support/downloads/software-products/download.labview-runtime.html?srsltid=AfmBOopup8cn0oFzFOwyLhWmhqS4r_rSOEyRL3oeYinoMHA7EQHQmmXR)
+- To edit the code you need a copy of NI LabView 2025. Talk to Heather
+#### Accelerometer
+- To edit the accelerometer code, you need an ST-Link V2 and VS Code with PlatformIO. I recommend reaching out to me (Kyle Moore) if you need to work on anything regarding the sensors. Otherwise here are some resources:
+  - [https://circuitdigest.com/microcontroller-projects/getting-started-with-stm8s-using-stvd-and-cosmic-c-compiler](https://www.hackster.io/patrick-fitzgerald2/program-stm8-with-sduino-arduino-ide-st-link-eb5c71)
+  - [https://tenbaht.github.io/sduino/](https://www.hackster.io/patrick-fitzgerald2/program-stm8-with-sduino-arduino-ide-st-link-eb5c71)
+  - [https://www.hackster.io/patrick-fitzgerald2/program-stm8-with-sduino-arduino-ide-st-link-eb5c71](https://www.hackster.io/patrick-fitzgerald2/program-stm8-with-sduino-arduino-ide-st-link-eb5c71)
