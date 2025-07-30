@@ -34,11 +34,21 @@ To get data quickly, the following steps can be used to safely start and operate
 1. Familiarize yourself with the LabVIEW panel. Pressing Ctrl+H will bring up a help menu. Clicking components will bring up more information on thier purpose.
 2. Looking at the graphs, they will not be zeroed. To fix this press SYSTEM TARE (bottom right of the Panel).  You should expect the graphs to the right to be within +- 5 of zero after tare.
 3. Looking at the VFD box (the one attached to the fan with dials/switches) make sure it is set to ON, switched to Automated, and check that the Emergency Stop button is not pressed. If it is, twist it clockwise to reset
-4. Now the fan is controlled by this panel. On the"Fan Controls" below, set the "VFD mode switch" to the upward postition to to enable Speed % Mode, which controls the fan by a percentage of its maximum power. You can now adjust the box "Speed %" which will spin up the fan.
+4. Now the fan is controlled by this panel. On the "Fan Controls" below, set the "VFD mode switch" to the upward postition to to enable Speed % Mode, which controls the fan by a percentage of its maximum power. You can now adjust the box "Speed %" which will spin up the fan.
 
-NOTE:  To save data to CSV, first hit "System Stop", then refer to the controls on the bottom of this panel. Select the Enable Data Collection button so it displays "Enabled". Then set the Spreadsheet Path by selecting the little folder icon and following the prompts. Change the name as desired. Start over from step 1.
+### Data Collection
 
----
+This application has extensive data logging capabilites, logging both raw unfiltered data and processed data. In order to utilize this function the following steps are required:
+
+1. Get wind tunnel and LabView set up and working (See quick start).
+2. Make sure application is halted by clicking "System Stop" button.
+3. Name your spreadsheet and select a directory from the folder icon (This defualts to the current date: YYYY-MM-DD_HH_MM_SS.csv and to the testing data directory on the pc on the cart)
+4. Make sure the Enable Data Collection is on and set to "Enabled"
+5. Start the program by clicking on white arrow on top left of screen
+6. Proceed with experiment
+7. *Important*: Hit system stop, **NOT** red stop sign on top left. A terminal will pop up for a second
+8. There should be two new CSV's created. One with _processed.csv and one without. The CSV without contains unformatted data (see Developer Guide) with more data points at the cost of readability. The _processed.csv has been formatted for readablilty at the cost of additional data points (these are averaged out into the values shown).
+9. If the _processed.csv isn't there and you need it, drag the unproccessed spreadsheet onto "process_csv.py" and this should format the data. Otherwise there is an issue with the python script and it is failing to create the formatted CSV.
 
 ## Developer Guide
 
