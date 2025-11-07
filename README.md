@@ -215,9 +215,9 @@ Accelerometers are an important troubleshooting tool, giving informtation on vib
 - Set VFD Mode Select to Speed %, enter in 10v, the Voltage Out should read 1. VFD frequency should climb to ~6 hz.
 - If Frequency at 0, go to VFD, open box. The display should read ~6hz
 - If the VFD is reporting 0hz, switch VFD to manual, and use dial on side to throttle VFD. If fan spins up, continue this troubleshooting guide, otherwise the issue is outside this guides scope
-- Check wiring leading to the CAB.s
+- Check wiring leading to the CAB.
 
-#### Accelerometer issures
+#### Accelerometer issues
 - Look at the board above the test section, the blue board should have a blue solid light and a flashing red light. If red light not flashing, press reset button on board.
 - Open up Arduino serial moniter on this computer. Check all COM ports until data shows up on the serial moniter. Close arduino and set port accordingly.
 - Check all wiring. Each acclerometer should have a green light.
